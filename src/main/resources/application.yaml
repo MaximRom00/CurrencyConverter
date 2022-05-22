@@ -1,2 +1,4 @@
 server:
-  port: 8082
+  port: 8081
+api:
+  key: nV9q5L5o9tlTZXbVJmqljs7CNXY8WKjy

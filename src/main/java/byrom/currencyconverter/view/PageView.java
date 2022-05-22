@@ -5,9 +5,9 @@ import byrom.currencyconverter.entity.dto.CurrencyConverterDto;
 import byrom.currencyconverter.service.CurrencyApi;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -15,24 +15,26 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 
 @Route("")
+@Theme(value = Lumo.class, variant = Lumo.DARK)
 public class PageView extends VerticalLayout {
 
     private VerticalLayout mainLayout;
     private NumberField amountForChange;
     private Button searchButton;
     private final CurrencyApi currencyApi;
-    Select<Currency> currencyFrom;
-    Select<Currency> currencyTo;
-    NumberField result;
+    private Select<Currency> currencyFrom;
+    private Select<Currency> currencyTo;
+    private NumberField result;
 
     public PageView(CurrencyApi currencyApi){
         this.currencyApi = currencyApi;
+
         mainLayout();
         setHeader();
-
-//        loadImage();
         setCurrency();
 
         searchButton.addClickListener(clickEvent -> {
@@ -57,21 +59,20 @@ public class PageView extends VerticalLayout {
         mainLayout.setSpacing(true);
         mainLayout.setMargin(true);
         mainLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+
         add(mainLayout);
     }
 
     private void setHeader() {
         HorizontalLayout header = new HorizontalLayout();
         header.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
-//        Label tittle = new Label();
 
-        header.add(new H1("Currency converter"));
+        header.add(new H2("Currency converter"));
 
         mainLayout.add(header);
     }
 
     private void setCurrency(){
-
         HorizontalLayout hl = new HorizontalLayout();
         hl.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
         hl.setSpacing(true);
@@ -82,7 +83,6 @@ public class PageView extends VerticalLayout {
         currencyFrom.setWidth("35%");
         currencyFrom.setItems(Currency.values());
         currencyFrom.setValue(Currency.USD);
-
 
 //        Amount for change
         amountForChange = new NumberField();
@@ -100,35 +100,29 @@ public class PageView extends VerticalLayout {
         currencyTo.setItems(Currency.values());
         currencyTo.setValue(Currency.USD);
 
+//        Swap two currency
+        Button button = new Button(new Icon(VaadinIcon.REFRESH));
+        button.addClickListener(change->{
+           Currency currency = currencyFrom.getValue();
+           currencyFrom.setValue(currencyTo.getValue());
+           currencyTo.setValue(currency);
+        });
+
 //        Result of conversion
         result = new NumberField();
         result.setWidth("60%");
+        result.setStep(0.0001);
 
         hl1.add(currencyTo, result);
 
-
 //        Converter button
         searchButton = new Button("Converter!");
-        searchButton.setWidth("10%");
+        searchButton.setWidth("15%");
+        searchButton.setHeight("20%");
 
         searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-
-        mainLayout.add(hl, hl1, searchButton);
+        searchButton.getStyle().set("margin-top", "55px");
+        mainLayout.add(hl,button, hl1, searchButton);
     }
-
-
-
-//    private void loadImage(){
-//        HorizontalLayout hl = new HorizontalLayout();
-//        hl.setDefaultVerticalComponentAlignment(Alignment.END);
-//
-//        Image logo = new Image("https://booster.io/wp-content/uploads/gateways-currency-e1443808519595.png", "Not found");
-//        logo.setWidth("50");
-//        logo.setHeight("40");
-////        logo.setVisible(true);
-//
-//        hl.add(logo);
-//        verticalLayout.add(hl);
-//    }
 }
